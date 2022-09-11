@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:contacts_app_test/contact_model.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 
 class Contacts extends StatefulWidget {
@@ -15,7 +18,17 @@ class _ContactsState extends State<Contacts> {
   void initState() {
     super.initState();
   }
-
+  initDefaultContacts() async {
+    final contactsBox = Hive.box('contacts');
+    final jsonString = await rootBundle.loadString('lib/contacts.json');
+    final jsonData = jsonDecode(jsonString);
+    final jsonContacts = jsonData["contact"];
+    for(var contact in jsonContacts){
+      final con = Contact.fromJson(contact);
+      contactBox.add(con);
+    }
+    final contact = Contact.fromJson(jsonContacts);
+  }
   void addContact(Contact contact){
     final contactsBox = Hive.box('contacts');
     contactsBox.add(contact);
@@ -25,7 +38,6 @@ class _ContactsState extends State<Contacts> {
   Future _refresh() async {
     await Future.delayed(Duration(seconds: 1));
     setState(() {
-
     });
   }
 
@@ -41,11 +53,11 @@ class _ContactsState extends State<Contacts> {
               final newContact = Contact('Test', '0192807993', 1662839984);
               addContact(newContact);
 
-            }, child: Text("Add",style: TextStyle(color: Colors.white),)),
+            }, child: const Text("Add",style: TextStyle(color: Colors.white),)),
             Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: RefreshIndicator(child:
+              child: RefreshIndicator(edgeOffset:250 ,child:
               CustomScrollView(
                 slivers: <Widget>[
                   const SliverAppBar(
@@ -68,9 +80,11 @@ class _ContactsState extends State<Contacts> {
                                     delegate: SliverChildBuilderDelegate(
                                         (BuildContext context, int index){
                                           final contact = contactBox.get(index) as Contact;
+                                          final DateTime timeStamp = DateTime.fromMillisecondsSinceEpoch(contact.checkIn! * 1000);
                                           return ListTile(
                                                 title: Text(contact.user.toString()),
-                                                trailing: Text(contact.phone.toString())
+                                                trailing: Text(contact.phone.toString()),
+                                            subtitle: Text(timeStamp.toLocal().toString()),
                                               );
                                         }, childCount: Hive.box('contacts').length,
                                       semanticIndexOffset: 1

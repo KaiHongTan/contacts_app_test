@@ -1,0 +1,54 @@
+{
+  "contact": [
+    {
+      "user": "Chan Saw Lin",
+      "phone": "0152131113",
+      "check-in": 1662705037
+    },
+    {
+      "user": "Lee Saw Loy",
+      "phone": "0161231346",
+      "check-in": 1662713125
+    },
+    {
+      "user": "Khaw Tong Lin",
+      "phone": "0158398109",
+      "check-in": 1662671347
+    },
+    {
+      "user": "Lim Kok Lin",
+      "phone": "0168279101",
+      "check-in": 1662610687
+    },
+    {
+      "user": "Low Jun Wei",
+      "phone": "0112731912",
+      "check-in": 1662621787
+    },
+    {
+      "user": "Yong Weng Kai",
+      "phone": "0172332743",
+      "check-in": 1660551787
+    },
+    {
+      "user": "Jayden Lee",
+      "phone": "0191236439",
+      "check-in": 1658405887
+    },
+    {
+      "user": "Kong Kah Yan",
+      "phone": "0111931233",
+      "check-in": 1658658067
+    },
+    {
+      "user": "Jasmine Lau",
+      "phone": "0162879190",
+      "check-in": 1662733391
+    },
+    {
+      "user": "Chan Saw Lin",
+      "phone": "016783239",
+      "check-in": 1662737415
+    }
+  ]
+}
