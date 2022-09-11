@@ -27,6 +27,7 @@ class Welcome {
   };
 }
 
+
 @HiveType(typeId: 1)
 class Contact {
   @HiveField(0)
