@@ -2,6 +2,8 @@
 
 Flutter application for Vimigo Technical Assessment by Tan Kai Hong
 
+Built and tested on Android, untested on iOS.
+
 All requirements of the storyline are fulfilled.
 
 Pub packages used:
