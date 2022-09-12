@@ -5,6 +5,8 @@ import 'package:contacts_app_test/contact_model.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:contacts_app_test/timeconfig.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class Contacts extends StatefulWidget {
   const Contacts({Key? key}) : super(key: key);
@@ -34,6 +36,16 @@ class _ContactsState extends State<Contacts> {
     final contactsBox = Hive.box('contacts');
     contactsBox.add(contact);
   }
+
+checkTimeAgo()   {
+    Future<bool> yes = TimeConfig.getTimeAgo();
+    if(yes == true){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   final contactBox = Hive.box('contacts');
 
   Future _refresh() async {
@@ -41,10 +53,23 @@ class _ContactsState extends State<Contacts> {
     setState(() {
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return
         Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              bool isTimeAgo = await TimeConfig.getTimeAgo();
+              if(isTimeAgo == true){
+                await TimeConfig.setTimeAgo(false);
+              }else{
+                await TimeConfig.setTimeAgo(true);
+              }
+              setState(() {
+
+              });
+            }),
       resizeToAvoidBottomInset: false,
       body: Container(
         child: Column(
@@ -80,6 +105,7 @@ class _ContactsState extends State<Contacts> {
                                           final contact = values[index] as Contact;
                                           final DateTime timeStamp = DateTime.fromMillisecondsSinceEpoch(contact.checkIn! * 1000);
                                           final d12 = DateFormat('dd/MM/yyyy, hh:mm a').format(timeStamp);
+                                          final timeAgo = timeago.format(timeStamp, locale: 'en');
                                           return Padding(
                                             padding: EdgeInsets.all(5),
                                             child:Card(
@@ -105,8 +131,13 @@ class _ContactsState extends State<Contacts> {
                                                     crossAxisAlignment: CrossAxisAlignment.end, 
                                                     children: [
                                                       Padding(padding: EdgeInsets.only(right: 5, top: 5),
-                                                      child: Text(d12.toString(),
-                                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300),),)
+                                                      child: FutureBuilder<bool>(
+                                                        future:TimeConfig.getTimeAgo(),
+                                                        initialData: true,
+                                                        builder: (BuildContext context, AsyncSnapshot<bool> snapshot){
+                                                          return snapshot.data == true? Text(timeAgo):Text(d12);
+                                                        },
+                                                      )),
 
                                                     ],
                                                   ))
