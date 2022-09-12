@@ -115,7 +115,7 @@ class _ContactsState extends State<Contacts> {
                           flexibleSpace: FlexibleSpaceBar(
                             title: Text('Contacts',
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 32)),
+                                    color: Colors.white, fontSize: 28)),
                           ),
                         ),
                         FutureBuilder(
