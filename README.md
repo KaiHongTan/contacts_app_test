@@ -13,7 +13,3 @@ Pub packages used:
   shared_preferences
   share_plus
   vcard_maintained
-
-## Demo
-
-To be added.
