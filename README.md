@@ -2,15 +2,18 @@
 
 Flutter application for Vimigo Technical Assessment by Tan Kai Hong
 
-## Getting Started
+All requirements of the storyline are fulfilled.
 
-This project is a starting point for a Flutter application.
+Pub packages used:
+  hive
+  hive_flutter
+  path_provider
+  intl
+  timeago
+  shared_preferences
+  share_plus
+  vcard_maintained
 
-A few resources to get you started if this is your first Flutter project:
+## Demo
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+To be added.
