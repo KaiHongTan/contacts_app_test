@@ -1,12 +1,17 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:contacts_app_test/randomContactGen.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_app_test/contact_model.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:contacts_app_test/timeconfig.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:share_plus/share_plus.dart';
+import 'package:vcard_maintained/vcard_maintained.dart';
 
 class Contacts extends StatefulWidget {
   const Contacts({Key? key}) : super(key: key);
@@ -50,15 +55,52 @@ checkTimeAgo()   {
 
   Future _refresh() async {
     await Future.delayed(Duration(seconds: 1));
+    RandomContactGen random = new RandomContactGen();
+    for (Contact x in random.randomContacts(5)){
+      addContact(x);
+    }
     setState(() {
     });
+  }
+
+  Future<String> getFilePath(String fileName) async {
+    Directory appDocumentsDirectory =
+    await getApplicationDocumentsDirectory(); // 1
+    String appDocumentsPath = appDocumentsDirectory.path; // 2
+    String filePath = '$appDocumentsPath/$fileName.txt'; // 3
+
+    return filePath;
+  }
+
+  void shareAllVCFCard(BuildContext context, vCard, name) async {
+    try {
+      List<String> vcsCardPath = <String>[];
+
+        var vCardAsString = vCard.getFormattedString();
+        final directory = await getApplicationDocumentsDirectory();
+        final path = directory.path;
+        var pathAsText = "$path/$name.txt";
+
+        var contactAsFile = File(pathAsText);
+        contactAsFile.writeAsString(vCardAsString);
+
+        var vcf = contactAsFile
+            .renameSync(contactAsFile.path.replaceAll(".txt", ".vcf"));
+        vcsCardPath.add(vcf.path);
+      Share.shareFiles(vcsCardPath);
+
+    } catch (e) {
+      print("Error Creating VCF File $e");
+      return null;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return
         Scaffold(
-          floatingActionButton: FloatingActionButton(
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
               bool isTimeAgo = await TimeConfig.getTimeAgo();
               if(isTimeAgo == true){
@@ -69,7 +111,14 @@ checkTimeAgo()   {
               setState(() {
 
               });
-            }),
+            }, label: FutureBuilder<bool>(
+            future:TimeConfig.getTimeAgo(),
+            initialData: true,
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot){
+              return snapshot.data == true? Text("Time Ago"):Text("Timestamp");
+            },
+          ),
+            ),
       resizeToAvoidBottomInset: false,
       body: Container(
         child: Column(
@@ -78,7 +127,7 @@ checkTimeAgo()   {
             Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: RefreshIndicator(edgeOffset:250 ,child:
+              child: RefreshIndicator(edgeOffset:280 ,child:
               CustomScrollView(
                 slivers: <Widget>[
                   const SliverAppBar(
@@ -137,7 +186,21 @@ checkTimeAgo()   {
                                                         builder: (BuildContext context, AsyncSnapshot<bool> snapshot){
                                                           return snapshot.data == true? Text(timeAgo):Text(d12);
                                                         },
-                                                      )),
+                                                      )
+                                                      ),
+                                                      Padding(padding: EdgeInsets.only(right: 15, top: 10),
+                                                      child:IconButton(
+                                                        icon: Icon(Icons.share),
+                                                        onPressed: () {
+                                                          var vcard = VCard();
+                                                          vcard.firstName = contact.user.toString();
+                                                          vcard.cellPhone = contact.phone;
+                                                          shareAllVCFCard(context, vcard, contact.user.toString());
+                                                          shareAllVCFCard(context, vcard, contact.user.toString());
+                                                          },
+                                                        iconSize: 24,
+                                                      ) ,
+                                                      ),
 
                                                     ],
                                                   ))
@@ -145,11 +208,6 @@ checkTimeAgo()   {
                                               ),
                                             ) ,
                                           );
-
-                                            //ListTile(
-                                                title: Text(contact.user.toString());
-                                                trailing: Text(contact.phone.toString());
-                                            subtitle: Text(timeStamp.toLocal().toString());
                                         }, childCount: Hive.box('contacts').length,
                                       semanticIndexOffset: 1),
                                 );

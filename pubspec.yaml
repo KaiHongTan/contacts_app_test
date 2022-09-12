@@ -44,6 +44,8 @@ dependencies:
   intl: ^0.17.0
   timeago: ^3.3.0
   shared_preferences: ^2.0.15
+  share_plus: ^4.1.0
+  vcard_maintained: any
 
 
 dev_dependencies:
